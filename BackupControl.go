@@ -1,19 +1,21 @@
 //https://stackoverflow.com/questions/33516053/windows-encrypted-rdp-passwords-in-golang
-package main
+package main // import "BackupsControl"
 
 import (
-	"dpapi"
+	"BackupsControl/dpapi" 
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
-	"sendmail"
+	"BackupsControl/sendmail"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+	"github.com/pkg/profile"
 )
 
 type pathandfilenames struct {
@@ -165,6 +167,9 @@ func FindMissedBackups(existingFiles map[string][]os.FileInfo,
 		curTime := time.Now()
 		minTimeOfFile := time.Date(curTime.Year(),
 			curTime.Month(), curTime.Day(), 0, 0, 0, 0, curTime.Location())
+		if minTimeOfFile.Weekday() == time.Monday {
+			minTimeOfFile.AddDate(0, 0, -3)
+		}
 		for _, pathandfile := range lastFiles {
 			groupName := extractGroupName(pathandfile.Filename)
 			if groupName == "" {
@@ -188,7 +193,7 @@ func FindMissedBackups(existingFiles map[string][]os.FileInfo,
 			timepoint := minTimeOfFile.Add(-24 * time.Duration(days) * time.Hour)
 
 			if timepoint.Sub(pathandfile.modtime) > 0 {
-				fmt.Printf("%s vs. %s \t %s\n", pathandfile.modtime, timepoint, pathandfile.Filename)
+				//fmt.Printf("%s vs. %s \t %s\n", pathandfile.modtime, timepoint, pathandfile.Filename)
 				ret = append(ret, pathandfile.Filename+"\t\t in "+pathandfile.Path)
 			}
 		}
@@ -197,7 +202,7 @@ func FindMissedBackups(existingFiles map[string][]os.FileInfo,
 	// if there were no files for backup group
 	for _, confstr := range configstruct {
 		if !confstr.hasAnyFiles {
-			fmt.Printf("%s \t\t in %s\n", confstr.Filename, confstr.Path)
+			//fmt.Printf("%s \t\t in %s\n", confstr.Filename, confstr.Path)
 			ret = append(ret, confstr.Filename+" \t\t  in "+confstr.Path)
 		}
 	}
@@ -223,16 +228,22 @@ func savePasswordToFile(configfilename *string, savepassword *string) {
 	f.Write([]byte(jsonstr))
 
 }
-
+func printUsage(w io.Writer) {
+	fmt.Fprintf(w, "%s", "Usage: BackupsControl -configfilename <name> [-savepassword password]\n")
+	return
+}
 func main() {
-	configfilename := flag.String("configfilename", "", `json config file name [{"path":"j:\b", "Filename":"base1", "Days":2}, ...]`)
-	savepassword := flag.String("savepassword", "", "Saves your email password using DPAPI in config file.")
+	defer profile.Start(profile.MemProfile,profile.ProfilePath(".")).Stop()
+	configfilename := flag.String("configfilename", "", `json config file name. Content is [{"path":"j:\b", "Filename":"base1", "Days":2}, ...]`)
+	savepassword := flag.String("savepassword", "", "Saves your email password using DPAPI in your config file.")
 	flag.Parse()
 	if !flag.Parsed() {
+		printUsage(os.Stderr)
 		flag.PrintDefaults()
 		return
 	}
 	if *configfilename == "" {
+		printUsage(os.Stderr)
 		flag.PrintDefaults()
 		return
 	}
@@ -269,6 +280,7 @@ func main() {
 
 		body := strings.Join(absentBackups, "\n")
 		if true {
+			fmt.Print(body)
 			sendmail.SendMailToMe(c, "arch3", body, "arch3")
 		} else {
 			fmt.Print(body)

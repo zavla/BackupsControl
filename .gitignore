@@ -1,1 +1,8 @@
 _git_/*
+debug
+*.exe
+mem.pprof
+
+_cpu.prof.pdf
+cpu.prof.txt
+__dpapi/_go._mod

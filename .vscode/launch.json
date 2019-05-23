@@ -5,6 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch file",
+            "type": "go",
+            "request": "launch",
+            "mode": "remote",
+            "program": "${workspaceFolder}",
+            //"program": "f:\\Zavla_VB\\GOOUT\\BackupsControl\\BackupsControl.exe",
+            "remotePath": "f:\\Zavla_VB\\GOOUT\\BackupsControl\\",
+            "host": "127.0.0.1",
+            "port": 52904
+            
+        },
+        {
             "name": "Launch",
             "type": "go",
             "request": "launch",

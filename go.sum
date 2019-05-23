@@ -1,0 +1,5 @@
+github.com/pkg/profile v1.3.0 h1:OQIvuDgm00gWVWGTf4m4mCt6W1/0YqU7Ntg0mySWgaI=
+github.com/pkg/profile v1.3.0/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6JUPA=
+github.com/rsc/benchgraffiti v0.0.0-20170203011114-ff448abfc41f h1:rI8REVZYO3a7zwfHwqBZkr83jND5D6KzmN0qyBjViqo=
+github.com/rsc/benchgraffiti v0.0.0-20170203011114-ff448abfc41f/go.mod h1:7mLp5ya97EkWIK9huISaBK9+UQP311oHt9vgRONd2IY=
+github.com/spf13/cobra v0.0.3/go.mod h1:1l0Ry5zgKvJasoi3XT1TypsSe7PqH0Sj9dhYf7v3XqQ=
