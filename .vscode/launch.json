@@ -24,7 +24,7 @@
             "program": "${fileDirname}",
             "env": {},
             //"args": ["-configfilename","f:\\Zavla_VB\\go\\src\\BackupsControl\\config.json","-savepassword","Zavla123"]
-            "args": ["-configfilename","f:\\Zavla_VB\\go\\src\\BackupsControl\\config.json"]
+            "args": ["-configfilename","f:\\Zavla_VB\\goout\\BackupsControl\\config.json"]
         }
     ]
 }
