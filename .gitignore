@@ -6,3 +6,4 @@ mem.pprof
 _cpu.prof.pdf
 cpu.prof.txt
 __dpapi/_go._mod
+__dpapi/dpapi.go

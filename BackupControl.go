@@ -31,32 +31,6 @@ type email struct {
 	Email []byte
 }
 
-// func readConfig(filename string) []pathandfilenames {
-// 	f, err := os.Open(filename)
-// 	if err != nil {
-// 		log.Fatalf("%s", err)
-// 	}
-// 	b, err := ioutil.ReadAll(f)
-// 	if err != nil {
-// 		log.Fatalf("%s", err)
-// 	}
-// 	if b[0] == 0xEF || b[0] == 0xBB || b[1] == 0xBB { // has BOM?
-// 		b = b[3:]
-// 	}
-
-// 	var datastruct []pathandfilenames
-// 	err = json.Unmarshal(b, &datastruct)
-// 	if err != nil {
-// 		log.Fatalf(`error: json structure is bad.\n\
-// 		%s\n\
-// 		Expects:[
-// 			{"path":"j:/b", "Filename":"A2", "group":"-FULL", "Days":7},
-// 			...
-// 			]`, err)
-// 	}
-// 	return datastruct
-// }
-
 // DecryptEmail returns password decrypted by Microsoft DPAPI
 func DecryptEmail(b []byte) string {
 	var emailobj email
@@ -71,45 +45,6 @@ func DecryptEmail(b []byte) string {
 	s := string(dec)
 	return s
 }
-
-// func extractGroupName(s string) string {
-// 	// all filenames are in the form dbnamehere_2018-10-08T08-00-00-497-FULL.bak
-// 	// if strings.HasPrefix(s, "ubcd_sklad_2010") {
-// 	// 	fmt.Print(s)
-// 	// }
-// 	year := time.Now().Year()
-// 	pos := strings.Index(s, "_"+strconv.Itoa(year))
-// 	if pos == -1 {
-// 		return ""
-// 	}
-// 	return string(s[:pos])
-// }
-// func findLastWithGroupName(m []pathandfilenames) {
-
-// }
-// func getUniquePaths(configstruct []pathandfilenames) map[string]int {
-// 	retmap := make(map[string]int)
-// 	for _, str := range configstruct {
-// 		if _, ok := retmap[str.Path]; !ok {
-// 			retmap[str.Path] = 1
-// 		}
-// 	}
-// 	return retmap
-// }
-// func readFilesFrompaths(uniqueconfigpaths map[string]int) map[string][]os.FileInfo {
-
-// 	retmap := make(map[string][]os.FileInfo)
-// 	for k := range uniqueconfigpaths {
-// 		filesinfo, err := ioutil.ReadDir(k)
-// 		if err != nil {
-// 			log.Fatalf("%s", err)
-// 		}
-
-// 		retmap[k] = filesinfo
-
-// 	}
-// 	return retmap // map of slices of fileinfos
-// }
 
 func savePasswordToFile(configfilename *string, savepassword *string) {
 	f, err := os.OpenFile(*configfilename+"_email", os.O_CREATE|os.O_TRUNC, 0)
