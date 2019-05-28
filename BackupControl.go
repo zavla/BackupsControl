@@ -1,10 +1,12 @@
 //https://stackoverflow.com/questions/33516053/windows-encrypted-rdp-passwords-in-golang
-package main // import "BackupsControl"
+package main 
 
 import (
-	"BackupsControl/dblist/v2"
-	"BackupsControl/dpapi"
-	"BackupsControl/sendmail"
+	"github.com/zavla/dblist/v2" //go.mod file declares replacement for special module "github.com/zavla/dblist/v2"
+	
+	"github.com/zavla/dpapi" //go.mod file declares REPLACEMENT for special module "github.com/zavla"
+	"github.com/zavla/sendmail" //go.mod file declares REPLACEMENT for special module "github.com/zavla"
+	
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -133,12 +135,8 @@ func main() {
 				continue
 			}
 			days := line.Days
-			if days == 0 {
-				days = 1
-			}
-			if time.Now().Hour() > 14 {
-				days++
-			}
+			days++ // backups copied at night. Next day in the morning they are here.
+			
 			if !line.HasAnyFiles {
 				line.HasAnyFiles = true // mark config line that there are some files
 			}
@@ -181,6 +179,7 @@ func main() {
 			sb.WriteString(fmt.Sprintf("%d", v.pLine.Days))
 			sb.WriteString(" days 		")
 			sb.WriteString(v.Name())
+			sb.WriteString(fmt.Sprintf("  file time = %v",v.ModTime()))
 			sb.WriteString("\n")
 		}
 		for _, v := range noFilesAtAll {

@@ -3,5 +3,9 @@ github.com/pkg/profile v1.3.0/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6J
 github.com/rsc/benchgraffiti v0.0.0-20170203011114-ff448abfc41f h1:rI8REVZYO3a7zwfHwqBZkr83jND5D6KzmN0qyBjViqo=
 github.com/rsc/benchgraffiti v0.0.0-20170203011114-ff448abfc41f/go.mod h1:7mLp5ya97EkWIK9huISaBK9+UQP311oHt9vgRONd2IY=
 github.com/spf13/cobra v0.0.3/go.mod h1:1l0Ry5zgKvJasoi3XT1TypsSe7PqH0Sj9dhYf7v3XqQ=
+github.com/zavla/sendmail v0.0.0-20181227144819-9a2b2327eeef h1:8DnnEuc3SB2qWKlg6Yh6kI1BZrussd4fmErZKEceKaw=
+github.com/zavla/sendmail v0.0.0-20181227144819-9a2b2327eeef/go.mod h1:lJJOQehDyKIbOHArC3HGBo9WuTH/uGWIe45Km2Lf5jU=
+github.com/zavla/sendmail v0.0.0-20190527120221-c154caff6183 h1:u0SY4bJR1qdBMac1iKHHsynqyI36WS+l4MxAtFUToww=
+github.com/zavla/sendmail v0.0.0-20190527120221-c154caff6183/go.mod h1:lJJOQehDyKIbOHArC3HGBo9WuTH/uGWIe45Km2Lf5jU=
 golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223 h1:DH4skfRX4EBpamg7iV4ZlCpblAHI6s6TDM39bFZumv8=
 golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
