@@ -1,11 +1,11 @@
-//https://stackoverflow.com/questions/33516053/windows-encrypted-rdp-passwords-in-golang
 package main 
 
 import (
-	"github.com/zavla/dblist/v2" //go.mod file declares replacement for special module "github.com/zavla/dblist/v2"
+	"github.com/zavla/dblist/v2" 
 	
-	"github.com/zavla/dpapi" //go.mod file declares REPLACEMENT for special module "github.com/zavla"
-	"github.com/zavla/sendmail" //go.mod file declares REPLACEMENT for special module "github.com/zavla"
+	//see go.mod file, it uses special module "github.com/zavla" and declares a replacement for it to use local packages in my GOPATH
+	"github.com/zavla/dpapi" 
+	"github.com/zavla/sendmail" 
 	
 	"encoding/json"
 	"flag"
