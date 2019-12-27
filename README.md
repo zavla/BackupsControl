@@ -1,8 +1,10 @@
-### Module BackupsControl is used to check the databases backup files (last ones) timestamps.
+## A DBA backup files tool set. ##
 
-It emails an operator in case of absence or outdated backup for every group of backup files.
+### Module BackupsControl is used to check the databases last backup files timestamps against a threshold. ###
+It emails an operator about outdated backups for every group of backup files.
 
-Backup files divided in groups by name template in config file config.json.
-Every database can have two or more groups of files: one for the full backups and one for the differential backups for example.
+Files must obey naming scheme.
+Database name and an optional suffix define a file group of related databases backups.
+Every file group may have its most recent files and outdated files.
 Uses Windows DPAPI to store email credentials.
 Works with TLS enabled email server.

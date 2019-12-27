@@ -1,12 +1,11 @@
-package main 
+package main
 
 import (
-	"github.com/zavla/dblist/v2" 
-	
-	//see go.mod file, it uses special module "github.com/zavla" and declares a replacement for it to use local packages in my GOPATH
-	"github.com/zavla/dpapi" 
-	"github.com/zavla/sendmail" 
-	
+	"github.com/zavla/dblist/v2"
+
+	"github.com/zavla/dpapi"
+	"github.com/zavla/sendmail"
+
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -74,8 +73,9 @@ func printUsage(w io.Writer) {
 
 func main() {
 	defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
-	configfilename := flag.String("configfilename", "", `json config file name. Content is [{"path":"j:\b", "Filename":"base1", "Days":2}, ...]`)
+	configfilename := flag.String("configfilename", "", `json config file name. Content example: [{"path":"j:/b", "Filename":"A2", "suffix":"-FULL.bak", "Days":10},]`)
 	savepassword := flag.String("savepassword", "", "Saves your email password using DPAPI in your config file.")
+	noemail := flag.Bool("noemail", false, "Do not send email.")
 	flag.Parse()
 	if !flag.Parsed() {
 		printUsage(os.Stderr)
@@ -115,34 +115,41 @@ func main() {
 	currentSuffixes := []string{"-FULL.bak", "-differ.dif", "-FULL.rar", "-differ.rar", ".rar", ".7z"}
 
 	type outdatedBackup struct {
-		dblist.FileInfoWin
-		pLine dblist.ConfigLine
+		fi         dblist.FileInfoWin
+		pLine      dblist.ConfigLine
+		expiredfor time.Duration
 	}
 	var outdatedFiles []outdatedBackup
 
 	for k := range actualFilesInfo {
 
+		//bigger(more wide) suffixes need to come first
 		lastFiles := dblist.GetLastFilesGroupedByFunc(actualFilesInfo[k],
 			dblist.GroupFunc,
-			//bigger(more wide) suffixes comes first
-			currentSuffixes)
+			currentSuffixes,
+			1)
 
-		// next decides wether file is outdated
+		// next decides if file is outdated
 		for _, v := range lastFiles {
+			// v is a last file in its group.
+			// Lets find a config parameters for this group.
 			line := dblist.FindConfigLineByFilename(v.Name(), currentSuffixes, ConfigItems)
 			if line == nil {
 				fmt.Printf("Error: for filename %s there is no line in config file.\n", v.Name())
 				continue
 			}
 			days := line.Days
-			days++ // backups copied at night. Next day in the morning they are here.
-			
+			// days++ // backups are copied at night. The next day in the morning they are here.
+			// If they are not then they are missing for at least a day.
+
 			if !line.HasAnyFiles {
-				line.HasAnyFiles = true // mark config line that there are some files
+				line.HasAnyFiles = true // mark the config line that there are some backup files
 			}
-			howold := time.Now().Sub(v.ModTime())
-			if howold > time.Hour*time.Duration(days*24) {
-				aFile := outdatedBackup{v, *line}
+			howoldafile := time.Now().Sub(v.ModTime())
+			allowedAge := time.Hour * time.Duration(days*24)
+			if howoldafile > allowedAge {
+				missedfor := (howoldafile) / (time.Hour * 24 * time.Duration(days))
+				aFile := outdatedBackup{fi: v, pLine: *line, expiredfor: missedfor}
 				outdatedFiles = append(outdatedFiles, aFile)
 			}
 		}
@@ -175,22 +182,23 @@ func main() {
 		var sb strings.Builder
 		sb.WriteString("------ Last outdated backups: -------\n")
 		for _, v := range outdatedFiles {
-			sb.WriteString("every ")
+			sb.WriteString("missed ")
+			sb.WriteString(fmt.Sprintf("%d backups, ", v.expiredfor))
+			sb.WriteString("expected every ")
 			sb.WriteString(fmt.Sprintf("%d", v.pLine.Days))
-			sb.WriteString(" days 		")
-			sb.WriteString(v.Name())
-			sb.WriteString(fmt.Sprintf("  file time = %v",v.ModTime()))
+			sb.WriteString(" days, 		last is ")
+			sb.WriteString(fmt.Sprintf("  time:%v	", v.fi.ModTime()))
+			sb.WriteString(v.fi.Name())
 			sb.WriteString("\n")
 		}
 		for _, v := range noFilesAtAll {
 			sb.WriteString(fmt.Sprintf(`no backups for config line: {"path":"%s", "filename":"%s", "suffix":"%s"}`+"\n", v.Path, v.Filename, v.Suffix))
 		}
 		body := sb.String()
-		if true {
-			fmt.Print(body)
+		fmt.Print(body)
+
+		if !*noemail {
 			sendmail.SendMailToMe(c, "arch3", body, "arch3")
-		} else {
-			fmt.Print(body)
 		}
 	}
 }
